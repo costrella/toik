@@ -1,0 +1,198 @@
+7_16;Health service;0.125
+7_16;Variety;0.25
+7_16;History;0.0625
+7_16;Politics;0.1875
+7_16;Law;0.0625
+7_16;Economy and finances;0.3125
+7_17;Variety;0.05263157894736842
+7_17;Press, internet, blogs;0.09774436090225563
+7_17;History;0.21052631578947367
+7_17;Politics;0.21052631578947367
+7_17;Poland and patriotism;0.07518796992481203
+7_17;Social actions and protests;0.08270676691729323
+7_17;Law;0.07518796992481203
+7_18;Lapse of time;0.0625
+7_18;Smolensk;0.3125
+7_18;Variety;0.125
+7_18;Press, internet, blogs;0.125
+7_18;Politics;0.1875
+7_18;Poland and patriotism;0.125
+7_18;Police and justice;0.0625
+7_19;Lapse of time;0.13636363636363635
+7_19;Smolensk;0.2727272727272727
+7_19;Variety;0.18181818181818182
+7_19;Press, internet, blogs;0.09090909090909091
+7_19;Politics;0.13636363636363635
+7_19;Police and justice;0.13636363636363635
+7_9;Smolensk;0.517948717948718
+7_9;Variety;0.19487179487179487
+7_9;Press, internet, blogs;0.09743589743589744
+7_8;Smolensk;0.5721153846153846
+7_8;Variety;0.15865384615384615
+7_8;Press, internet, blogs;0.0625
+7_8;Politics;0.1346153846153846
+7_7;Lapse of time;0.05102040816326531
+7_7;Variety;0.41836734693877553
+7_7;Press, internet, blogs;0.12244897959183673
+7_7;Religion and philosophy;0.07142857142857142
+7_7;Music, art, literature;0.11224489795918367
+7_6;Smolensk;0.47468354430379744
+7_6;Variety;0.17721518987341772
+7_6;Press, internet, blogs;0.10126582278481013
+7_6;Music, art, literature;0.056962025316455694
+7_5;Health service;0.06611570247933884
+7_5;Variety;0.19834710743801653
+7_5;Press, internet, blogs;0.08264462809917356
+7_5;Politics;0.2066115702479339
+7_5;Poland and patriotism;0.0743801652892562
+7_5;Social actions and protests;0.0743801652892562
+7_5;Economy and finances;0.06611570247933884
+7_4;Science and education;0.3469387755102041
+7_4;World and foreign countries;0.10884353741496598
+7_4;Variety;0.2108843537414966
+7_4;Press, internet, blogs;0.08163265306122448
+7_4;Religion and philosophy;0.08163265306122448
+7_4;Politics;0.06802721088435375
+7_3;Smolensk;0.14185173600250234
+7_3;Variety;0.24820143884892087
+7_3;Press, internet, blogs;0.12699405692837035
+7_3;Politics;0.11792305286205818
+7_35;Variety;0.14285714285714285
+7_35;Press, internet, blogs;0.2571428571428571
+7_35;Religion and philosophy;0.08571428571428572
+7_35;Politics;0.3142857142857143
+7_35;Social actions and protests;0.05714285714285714
+7_35;Economy and finances;0.05714285714285714
+7_2;Smolensk;0.12162162162162163
+7_2;Variety;0.25675675675675674
+7_2;Press, internet, blogs;0.14864864864864866
+7_2;Politics;0.12162162162162163
+7_34;Smolensk;0.12
+7_34;Variety;0.32
+7_34;Religion and philosophy;0.08
+7_34;Corruption and affairs;0.12
+7_1;Smolensk;0.426812585499316
+7_1;Variety;0.16279069767441862
+7_1;Press, internet, blogs;0.106703146374829
+7_1;Politics;0.08207934336525308
+7_37;Lapse of time;0.09090909090909091
+7_37;Smolensk;0.09090909090909091
+7_37;Variety;0.09090909090909091
+7_37;Press, internet, blogs;0.18181818181818182
+7_37;Religion and philosophy;0.09090909090909091
+7_37;Politics;0.09090909090909091
+7_37;Music, art, literature;0.09090909090909091
+7_37;Poland and patriotism;0.09090909090909091
+7_37;Family;0.09090909090909091
+7_37;Police and justice;0.09090909090909091
+7_11;Smolensk;0.49700598802395207
+7_11;Variety;0.12574850299401197
+7_11;Politics;0.17365269461077845
+7_11;Music, art, literature;0.059880239520958084
+7_0;Science and education;0.38513513513513514
+7_0;Variety;0.20945945945945946
+7_0;Press, internet, blogs;0.10135135135135136
+7_0;Religion and philosophy;0.11486486486486487
+7_36;Smolensk;0.48
+7_36;Variety;0.2
+7_36;Politics;0.12
+7_10;Smolensk;0.6086956521739131
+7_10;Variety;0.11594202898550725
+7_10;Press, internet, blogs;0.08695652173913043
+7_10;Politics;0.13043478260869565
+7_31;Variety;0.1
+7_31;History;0.1
+7_31;Politics;0.2
+7_31;Law;0.1
+7_31;War and weapon;0.1
+7_31;Economy and finances;0.2
+7_31;Police and justice;0.2
+7_13;Press, internet, blogs;0.21875
+7_13;Religion and philosophy;0.25
+7_13;Economy and finances;0.3125
+7_30;Smolensk;0.16
+7_30;Variety;0.2
+7_30;Politics;0.24
+7_30;War and weapon;0.08
+7_30;Economy and finances;0.12
+7_30;Police and justice;0.08
+7_12;Smolensk;0.5344827586206896
+7_12;Variety;0.15024630541871922
+7_12;Press, internet, blogs;0.06896551724137931
+7_12;Politics;0.11083743842364532
+7_33;Smolensk;0.52
+7_33;Variety;0.16
+7_33;Press, internet, blogs;0.24
+7_15;Smolensk;0.48
+7_15;Variety;0.18285714285714286
+7_15;Press, internet, blogs;0.09714285714285714
+7_15;Music, art, literature;0.06285714285714286
+7_32;Press, internet, blogs;0.10091743119266056
+7_32;History;0.26605504587155965
+7_32;Politics;0.25688073394495414
+7_32;Poland and patriotism;0.07339449541284404
+7_32;Social actions and protests;0.10091743119266056
+7_32;Law;0.10091743119266056
+7_14;Variety;0.38392857142857145
+7_14;Press, internet, blogs;0.07142857142857142
+7_14;Religion and philosophy;0.08035714285714286
+7_14;Music, art, literature;0.10714285714285714
+7_29;Lapse of time;0.125
+7_29;Variety;0.125
+7_29;Press, internet, blogs;0.125
+7_29;History;0.125
+7_29;Law;0.125
+7_29;Economy and finances;0.25
+7_29;Police and justice;0.125
+7_27;Science and education;0.0625
+7_27;Smolensk;0.0625
+7_27;Variety;0.375
+7_27;Press, internet, blogs;0.0625
+7_27;Transport;0.0625
+7_27;Corruption and affairs;0.25
+7_27;War and weapon;0.0625
+7_27;Economy and finances;0.0625
+7_28;Press, internet, blogs;0.11016949152542373
+7_28;History;0.2542372881355932
+7_28;Politics;0.23728813559322035
+7_28;Poland and patriotism;0.06779661016949153
+7_28;Social actions and protests;0.1016949152542373
+7_28;Law;0.0847457627118644
+7_22;Smolensk;0.16666666666666666
+7_22;Variety;0.3333333333333333
+7_22;Press, internet, blogs;0.16666666666666666
+7_22;Transport;0.125
+7_22;War and weapon;0.125
+7_21;Variety;0.1
+7_21;Press, internet, blogs;0.1
+7_21;History;0.25
+7_21;Politics;0.1
+7_21;Law;0.1
+7_21;Economy and finances;0.3
+7_20;Variety;0.425
+7_20;Press, internet, blogs;0.125
+7_20;Religion and philosophy;0.0875
+7_20;Music, art, literature;0.0875
+7_26;World and foreign countries;0.07936507936507936
+7_26;Variety;0.30158730158730157
+7_26;Press, internet, blogs;0.3333333333333333
+7_26;Economy and finances;0.06349206349206349
+7_25;Smolensk;0.46153846153846156
+7_25;Variety;0.07692307692307693
+7_25;Press, internet, blogs;0.07692307692307693
+7_25;Politics;0.3076923076923077
+7_25;Music, art, literature;0.07692307692307693
+7_24;Smolensk;0.2571428571428571
+7_24;Variety;0.2
+7_24;Press, internet, blogs;0.2
+7_24;Politics;0.05714285714285714
+7_24;Social actions and protests;0.05714285714285714
+7_24;Corruption and affairs;0.05714285714285714
+7_24;Police and justice;0.11428571428571428
+7_23;Health service;0.05555555555555555
+7_23;Smolensk;0.5
+7_23;Variety;0.1111111111111111
+7_23;Press, internet, blogs;0.1111111111111111
+7_23;Religion and philosophy;0.1111111111111111
+7_23;History;0.05555555555555555
+7_23;Politics;0.05555555555555555

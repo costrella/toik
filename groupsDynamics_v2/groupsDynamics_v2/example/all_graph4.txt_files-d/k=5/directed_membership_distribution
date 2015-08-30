@@ -1,0 +1,20 @@
+# The node membership distr. in the directed  communities at k=5
+# from D:\social_net\new_slots_salon24\7days_4_overlapping\roles\full_graphs\all_graph364.txt
+# at no lower link weight threshold,
+# and at no upper link weight threshold.
+# Links were treated as directed.
+# No time limit was set for the clique search.
+
+0 1744
+1 116
+2 43
+3 23
+4 9
+5 8
+6 4
+7 1
+8 1
+12 1
+15 1
+16 1
+

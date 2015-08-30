@@ -1,0 +1,6 @@
+package pl.edu.agh.sna.model;
+
+public enum Statistics {
+	WRITTEN_POSTS, WRITTEN_COMMENTS, WRITTEN_COMMENTS_FOR_OWN_THREADS, RECEIVED_COMMENTS_FOR_WRITTEN_COMMENTS;
+
+}

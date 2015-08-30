@@ -1,0 +1,32 @@
+# The com. degree distr. of the directed  communities at k=5
+# from D:\social_net\new_slots_salon24\7days_4_overlapping\roles\full_graphs\all_graph374.txt
+# at no lower link weight threshold,
+# and at no upper link weight threshold.
+# Links were treated as directed.
+# No time limit was set for the clique search.
+
+1 1
+2 5
+3 2
+4 6
+5 1
+6 4
+7 2
+8 2
+9 3
+10 1
+11 1
+12 2
+13 2
+14 1
+15 2
+16 2
+17 5
+18 2
+19 1
+21 2
+22 2
+23 2
+25 1
+45 1
+
