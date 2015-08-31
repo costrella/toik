@@ -11,6 +11,7 @@ import javax.swing.SwingConstants;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import pl.edu.agh.sna.dynamics.gevi.jgraph.mxCustomCell;
 import pl.edu.agh.sna.dynamics.gevi.jgraph.mxCustomGraph;
@@ -26,6 +27,7 @@ import pl.edu.agh.sna.util.GroupTransitionsUtil;
 
 import com.google.common.collect.Multimap;
 
+@Component("gevi")
 public class GEVi {
 	private static final int DEFAULT_CELL_WIDTH = 80;
 	private static final int DEFAULT_CELL_HEIGHT = 40;

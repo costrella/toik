@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import pl.edu.agh.sna.model.Group;
 
+@Component("groupContextReader")
 public class GroupContextReader {
 
 	public void readContext(String filename, String contextName, Map<String, Group> groupMap) throws IOException {

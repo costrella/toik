@@ -10,9 +10,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.stereotype.Component;
 
 import pl.edu.agh.sna.model.Group;
 
+//domyslnie jest tworzony singleton
+//mozna to zmieniac ustawiajac SCOPE na prototype
+@Component("cFinderReader")
 public class CFinderReader implements IGroupReader {
 
 	public Map<String, Group> getGroups(String filename, String prefix, int slot) throws IOException {
