@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import pl.edu.agh.sna.demo.Member;
 import pl.edu.agh.sna.measures.DiffSizeTimesMeasure;
 import pl.edu.agh.sna.measures.ModifiedJaccardIndex;
 import pl.edu.agh.sna.model.Group;
@@ -36,8 +37,11 @@ public class GroupEvolutionTracker {
 	private static final int MIN_GROUP_SIZE = 3;
 	private List<TimeSlot> timeslots;
 	private Set<Group> stableGroups = new HashSet<>();
-	private Multimap<Group, GroupTransition> groupTransitions = LinkedListMultimap.create();
-	private Multimap<Group, GroupTransition> decayGroupTransitions = LinkedListMultimap.create();
+	private Multimap<Group, GroupTransition> groupTransitions = LinkedListMultimap
+			.create();
+	private Multimap<Group, GroupTransition> decayGroupTransitions = LinkedListMultimap
+			.create();
+	private List<Group> groupsActive = new ArrayList<Group>();
 
 	private double evolutionThreshold = 0.5;
 	private int ratioBetweenGroupsForMatching = 50;
@@ -60,7 +64,17 @@ public class GroupEvolutionTracker {
 		appendDecayEvents();
 	}
 
+
+	public List<Group> getGroupsActive() {
+		return groupsActive;
+	}
+
+	public void setGroupsActive(List<Group> groupsActive) {
+		this.groupsActive = groupsActive;
+	}
+
 	private void makeTransitions(double threshold) {
+		groupsActive.clear();
 		Preconditions.checkNotNull(timeslots);
 		Preconditions.checkArgument(timeslots.size() > 1);
 
@@ -81,18 +95,22 @@ public class GroupEvolutionTracker {
 				for (Group nextGroup : nextSlot.getGroupMap().values()) {
 					if (nextGroup.getMembers().size() < MIN_GROUP_SIZE)
 						continue;
-					double diffSizeTimesValue = diffSizeTimesMeasure.calculate(currentGroup.getMembers(),
-							nextGroup.getMembers());
+					double diffSizeTimesValue = diffSizeTimesMeasure.calculate(
+							currentGroup.getMembers(), nextGroup.getMembers());
 
 					if (diffSizeTimesValue < ratioBetweenGroupsForMatching) {
-						double match = mJaccard.calculate(currentGroup.getMembers(), nextGroup.getMembers());
+						double match = mJaccard.calculate(
+								currentGroup.getMembers(),
+								nextGroup.getMembers());
 
 						if (match >= threshold) {
-							if(currentGroup.getGlobalName().equals("6_32")){
-								System.out.println("a");
-							}
-							GroupTransition transition = new GroupTransition(currentGroup, nextGroup, match);
+							// if(currentGroup.getGlobalName().equals("6_32")){
+							// System.out.println("a");
+							// }
+							GroupTransition transition = new GroupTransition(
+									currentGroup, nextGroup, match);
 							groupTransitions.put(currentGroup, transition);
+							groupsActive.add(currentGroup);
 						}
 					}
 				}
@@ -113,8 +131,10 @@ public class GroupEvolutionTracker {
 			int fromSize = fromGroup.getMembers().size();
 			int toSize = toGroup.getMembers().size();
 
-			Collection<Group> successors = GroupTransitionsUtil.getGroupSuccessors(fromGroup, groupTransitions);
-			Collection<Group> predecessors = GroupTransitionsUtil.getGroupPredecessors(toGroup, groupTransitions);
+			Collection<Group> successors = GroupTransitionsUtil
+					.getGroupSuccessors(fromGroup, groupTransitions);
+			Collection<Group> predecessors = GroupTransitionsUtil
+					.getGroupPredecessors(toGroup, groupTransitions);
 
 			if (fromSize / toSize >= RATIO) {
 				transition.setEventType(GroupEvents.DELETION);
@@ -125,7 +145,8 @@ public class GroupEvolutionTracker {
 				for (Group succ : successors) {
 					if (!toGroup.getName().equals(succ.getName())) {
 						int succSize = succ.getMembers().size();
-						if (fromSize / succSize < RATIO && succSize / fromSize < RATIO) {
+						if (fromSize / succSize < RATIO
+								&& succSize / fromSize < RATIO) {
 							similarSucc = true;
 							break;
 						}
@@ -135,7 +156,8 @@ public class GroupEvolutionTracker {
 				for (Group pred : predecessors) {
 					if (!fromGroup.getName().equals(pred.getName())) {
 						int predSize = pred.getMembers().size();
-						if (predSize / toSize < RATIO && toSize / predSize < RATIO) {
+						if (predSize / toSize < RATIO
+								&& toSize / predSize < RATIO) {
 							similarPred = true;
 							break;
 						}
@@ -159,7 +181,8 @@ public class GroupEvolutionTracker {
 				for (Group pred : predecessors) {
 					if (!fromGroup.getName().equals(pred.getName())) {
 						int predSize = pred.getMembers().size();
-						if (predSize / toSize < RATIO && toSize / predSize < RATIO) {
+						if (predSize / toSize < RATIO
+								&& toSize / predSize < RATIO) {
 							similar = true;
 							break;
 						}
@@ -192,15 +215,19 @@ public class GroupEvolutionTracker {
 			}
 
 			for (GroupTransition transition : groupTransitions.values()) {
-				if (transition.getTo() != null && startGroupNames.contains(transition.getTo().getName())) {
+				if (transition.getTo() != null
+						&& startGroupNames.contains(transition.getTo()
+								.getName())) {
 					startGroupNames.remove(transition.getTo().getName());
 				}
 			}
 
-			Map<String, Group> groupMap = GroupTransitionsUtil.extractGroups(groupTransitions);
+			Map<String, Group> groupMap = GroupTransitionsUtil
+					.extractGroups(groupTransitions);
 
 			for (String startGroupName : startGroupNames) {
-				Collection<GroupTransition> transitions = groupTransitions.get(groupMap.get(startGroupName));
+				Collection<GroupTransition> transitions = groupTransitions
+						.get(groupMap.get(startGroupName));
 
 				boolean stable = false;
 				for (GroupTransition t : transitions) {
@@ -241,7 +268,8 @@ public class GroupEvolutionTracker {
 	public void saveGroupEvolutionsWithEvents(String path) throws IOException {
 		Map<GroupEvents, Integer> eventsMap = new HashMap<>();
 
-		BufferedWriter writer = new BufferedWriter(new FileWriter(new File(path)));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(
+				new File(path)));
 
 		for (TimeSlot timeslot : timeslots) {
 
@@ -249,13 +277,15 @@ public class GroupEvolutionTracker {
 				int timeslotNo = timeslot.getNumber();
 
 				if (stableGroups.contains(group)) {
-					Collection<GroupTransition> successors = GroupTransitionsUtil.getGroupSuccessorTransitions(group,
-							groupTransitions);
+					Collection<GroupTransition> successors = GroupTransitionsUtil
+							.getGroupSuccessorTransitions(group,
+									groupTransitions);
 					if (successors.size() > 0) {
 						List<Integer> groupSuccIds = new ArrayList<>();
 						Map<Integer, GroupTransition> tmp = new HashMap<>();
 						for (GroupTransition succTrans : successors) {
-							Integer localId = Integer.valueOf(succTrans.getTo().getLocalName());
+							Integer localId = Integer.valueOf(succTrans.getTo()
+									.getLocalName());
 							groupSuccIds.add(localId);
 							tmp.put(localId, succTrans);
 						}
@@ -272,7 +302,8 @@ public class GroupEvolutionTracker {
 							writer.write(sb.toString());
 							writer.newLine();
 
-							MapUtil.addOccurenceToMap(eventsMap, succTrans.getEventType());
+							MapUtil.addOccurenceToMap(eventsMap,
+									succTrans.getEventType());
 						}
 					} else if (timeslot.getNumber() != lastSlotNo) {
 						StringBuilder sb = new StringBuilder();
@@ -300,13 +331,14 @@ public class GroupEvolutionTracker {
 		writer.close();
 	}
 
-	public Collection<GroupTransition> getGroupTransitionsFromTimeslot(TimeSlot timeslot) {
+	public Collection<GroupTransition> getGroupTransitionsFromTimeslot(
+			TimeSlot timeslot) {
 		Preconditions.checkNotNull(timeslot);
 
 		Set<GroupTransition> setOfTransitions = new HashSet<>();
 		for (Group group : timeslot.getGroupMap().values()) {
-			Collection<GroupTransition> successors = GroupTransitionsUtil.getGroupSuccessorTransitions(group,
-					groupTransitions);
+			Collection<GroupTransition> successors = GroupTransitionsUtil
+					.getGroupSuccessorTransitions(group, groupTransitions);
 			if (successors.size() > 0) {
 				setOfTransitions.addAll(successors);
 			}
@@ -324,7 +356,8 @@ public class GroupEvolutionTracker {
 	}
 
 	public Multimap<Group, GroupTransition> getAllGroupTransitions() {
-		Multimap<Group, GroupTransition> allTransitions = LinkedListMultimap.create();
+		Multimap<Group, GroupTransition> allTransitions = LinkedListMultimap
+				.create();
 		allTransitions.putAll(groupTransitions);
 		allTransitions.putAll(decayGroupTransitions);
 		return Multimaps.unmodifiableMultimap(allTransitions);
@@ -339,7 +372,8 @@ public class GroupEvolutionTracker {
 	}
 
 	public void setEvolutionThreshold(double evolutionThreshold) {
-		Preconditions.checkArgument(evolutionThreshold > 0 && evolutionThreshold < 1,
+		Preconditions.checkArgument(evolutionThreshold > 0
+				&& evolutionThreshold < 1,
 				"Evolution threshold should be between 0 and 1");
 		this.evolutionThreshold = evolutionThreshold;
 	}
@@ -348,7 +382,8 @@ public class GroupEvolutionTracker {
 		return ratioBetweenGroupsForMatching;
 	}
 
-	public void setRatioBetweenGroupsForMatching(int ratioBetweenGroupsForMatching) {
+	public void setRatioBetweenGroupsForMatching(
+			int ratioBetweenGroupsForMatching) {
 		this.ratioBetweenGroupsForMatching = ratioBetweenGroupsForMatching;
 	}
 
@@ -356,7 +391,8 @@ public class GroupEvolutionTracker {
 		return ratioBetweenGroupsForStrongMatching;
 	}
 
-	public void setRatioBetweenGroupsForStrongMatching(int ratioBetweenGroupsForStrongMatching) {
+	public void setRatioBetweenGroupsForStrongMatching(
+			int ratioBetweenGroupsForStrongMatching) {
 		this.ratioBetweenGroupsForStrongMatching = ratioBetweenGroupsForStrongMatching;
 	}
 
@@ -365,7 +401,8 @@ public class GroupEvolutionTracker {
 	}
 
 	public void setRatioForConstancy(double ratioForConstancy) {
-		Preconditions.checkArgument(ratioForConstancy >= 0 && ratioForConstancy < 0.2,
+		Preconditions.checkArgument(ratioForConstancy >= 0
+				&& ratioForConstancy < 0.2,
 				"Ratio for constancy event should be between 0 and 0.2");
 		this.ratioForConstancy = ratioForConstancy;
 	}
@@ -374,8 +411,10 @@ public class GroupEvolutionTracker {
 		return minDurationTimeForStableGroups;
 	}
 
-	public void setMinDurationTimeForStableGroups(int minDurationTimeForStableGroups) {
-		Preconditions.checkArgument(minDurationTimeForStableGroups > 0 && minDurationTimeForStableGroups <= 3,
+	public void setMinDurationTimeForStableGroups(
+			int minDurationTimeForStableGroups) {
+		Preconditions.checkArgument(minDurationTimeForStableGroups > 0
+				&& minDurationTimeForStableGroups <= 3,
 				"Min duration time for stable groups should be no more than 3");
 		this.minDurationTimeForStableGroups = minDurationTimeForStableGroups;
 	}
@@ -389,11 +428,14 @@ public class GroupEvolutionTracker {
 		for (TimeSlot timeslot : timeslots) {
 			for (Group group : timeslot.getGroupMap().values()) {
 				if (stableGroups.contains(group)) {
-					Collection<GroupTransition> successors = GroupTransitionsUtil.getGroupSuccessorTransitions(group,
-							groupTransitions);
-					//jesli juz nie ma nastepcow
-					if (successors.size() == 0 && (timeslot.getNumber() != lastSlotNo)) {
-						GroupTransition transition = new GroupTransition(group, null, 0);
+					Collection<GroupTransition> successors = GroupTransitionsUtil
+							.getGroupSuccessorTransitions(group,
+									groupTransitions);
+					// jesli juz nie ma nastepcow
+					if (successors.size() == 0
+							&& (timeslot.getNumber() != lastSlotNo)) {
+						GroupTransition transition = new GroupTransition(group,
+								null, 0);
 						transition.setEventType(GroupEvents.DECAY);
 						decayGroupTransitions.put(group, transition);
 					}

@@ -14,6 +14,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import pl.edu.agh.sna.dynamics.GroupEvolutionTracker;
 import pl.edu.agh.sna.dynamics.gevi.jgraph.mxCustomCell;
 import pl.edu.agh.sna.dynamics.gevi.jgraph.mxCustomGraph;
 import pl.edu.agh.sna.dynamics.gevi.jgraph.mxCustomGraphComponent;
@@ -52,8 +53,9 @@ public class GEVi {
 	private mxCustomGraphComponent gComp;
 	private boolean firstStart = true;
 	private JTabbedPane jtabbed;
+	int tabIndex = 0;
 
-	public void visualiseGroupEvolution(
+	public void visualiseGroupEvolution(GroupEvolutionTracker evo,
 			Multimap<Group, GroupTransition> groupTransitions,
 			int thresholdStrongMatching) {
 		mxCustomGraph g = buildGraph(groupTransitions, thresholdStrongMatching);
@@ -61,10 +63,10 @@ public class GEVi {
 		log.debug("nodes in jgraph: " + vertexNameMap.size());
 
 		assignAdditionalInfoForTransitions(vertexNameMap, groupTransitions);
-		visualiseGraph(g);
+		visualiseGraph(evo, g);
 	}
 
-	private void visualiseGraph(mxCustomGraph g) {
+	private void visualiseGraph(GroupEvolutionTracker evo, mxCustomGraph g) {
 		mxCustomHierarchicalLayout layout = new mxCustomHierarchicalLayout(g,
 				SwingConstants.WEST);
 		layout.setDisableEdgeStyle(false);
@@ -93,7 +95,16 @@ public class GEVi {
 			firstStart = false;
 		}
 //		jtabbed.addTab("One", gComp);
-		 jtabbed.addTab("One", null, gComp, "Tab 1");
+		String param = "<html><body>Param("+ ++tabIndex +"): <br>"
+				+ "<b>Evolution Threshold: </b>"+evo.getEvolutionThreshold() + "<br>"+
+				"<b>ratioBetweenGroupsForMatching: </b>"+evo.getRatioBetweenGroupsForMatching()+ "<br>"+
+				"<b>ratioBetweenGroupsForStrongMatching: </b>"+evo.getRatioBetweenGroupsForStrongMatching()+ "<br>"+
+				"<b>ratioForConstancy: </b>"+evo.getRatioForConstancy()+ "<br>"+
+				"<b>minDurationTimeForStableGroups: </b>"+evo.getMinDurationTimeForStableGroups();
+		
+		
+		
+		 jtabbed.addTab("Tab:"+ tabIndex, null, gComp, param);
 	}
 
 	private mxCustomGraph buildGraph(
