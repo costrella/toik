@@ -45,6 +45,7 @@ public class GroupTransitionsUtil {
 		return map;
 	}
 
+	//pobieramy nastepcow
 	public static Collection<GroupTransition> getGroupSuccessorTransitions(Group group,
 			Multimap<Group, GroupTransition> groupTransitions) {
 		List<GroupTransition> list = new ArrayList<>();

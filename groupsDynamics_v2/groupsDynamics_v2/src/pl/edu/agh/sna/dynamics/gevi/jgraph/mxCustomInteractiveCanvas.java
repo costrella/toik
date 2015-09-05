@@ -52,7 +52,7 @@ public class mxCustomInteractiveCanvas extends mxInteractiveCanvas {
 				if (cell.isOutgoingAdds()) {
 					g.drawImage(ResourcesReader.getTopRightArrowImg(), rect.x + 3 * rect.width / 4, rect.y
 							- rect.height / 2 - scaledDistanceFromCell, imgSize, imgSize, null);
-					g.setColor(Color.BLACK);
+					g.setColor(Color.RED);
 					g.drawString(String.valueOf(cell.getOutgoingValue()), rect.x + 3 * rect.width / 4
 							+ specificScaledDistanceFromCell, rect.y - rect.height / 2 + scaledDistanceFromCell);
 				}

@@ -12,6 +12,12 @@ public class Start {
 		
 		GroupDynamicsAnalyzerDemo demo = (GroupDynamicsAnalyzerDemo) context.getBean("groupDynamics");
 		demo.analyzeExampleWithTopicContext();
+		
+//		String a = "0.5";
+//		double currentBalanceDbl = Double.parseDouble(a);
+//		System.out.println(currentBalanceDbl);
 	}
+	
+	
 
 }

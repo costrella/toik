@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -49,8 +50,12 @@ public class GEVi {
 	private String category;
 	private double maxThresholdForContext = 0.5;
 	private mxCustomGraphComponent gComp;
+	private boolean firstStart = true;
+	private JTabbedPane jtabbed;
 
-	public void visualiseGroupEvolution(Multimap<Group, GroupTransition> groupTransitions, int thresholdStrongMatching) {
+	public void visualiseGroupEvolution(
+			Multimap<Group, GroupTransition> groupTransitions,
+			int thresholdStrongMatching) {
 		mxCustomGraph g = buildGraph(groupTransitions, thresholdStrongMatching);
 		Map<String, mxCustomCell> vertexNameMap = g.getVertexMap();
 		log.debug("nodes in jgraph: " + vertexNameMap.size());
@@ -60,7 +65,8 @@ public class GEVi {
 	}
 
 	private void visualiseGraph(mxCustomGraph g) {
-		mxCustomHierarchicalLayout layout = new mxCustomHierarchicalLayout(g, SwingConstants.WEST);
+		mxCustomHierarchicalLayout layout = new mxCustomHierarchicalLayout(g,
+				SwingConstants.WEST);
 		layout.setDisableEdgeStyle(false);
 		layout.setInterRankCellSpacing(interRankCellSpacing);
 		layout.setIntraCellSpacing(intraCellSpacing);
@@ -72,19 +78,27 @@ public class GEVi {
 		gComp = new mxCustomGraphComponent(g);
 		gComp.zoom(zoom);
 		if (contextName != null && category != null) {
-			gComp.recolorConvergentVertices(contextName, category, maxThresholdForContext);
+			gComp.recolorConvergentVertices(contextName, category,
+					maxThresholdForContext);
 		}
-
-		JFrame frame = new JFrame();
-		frame.setSize(800, 600);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// frame.getContentPane().setLayout(new FlowLayout());
-		// frame.getContentPane().add(createPanel());
-		frame.getContentPane().add(gComp);
+		if (firstStart) {
+			jtabbed = new JTabbedPane();
+			JFrame frame = new JFrame();
+			frame.setSize(800, 600);
+			frame.setVisible(true);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			// frame.getContentPane().setLayout(new FlowLayout());
+			// frame.getContentPane().add(createPanel());
+			frame.getContentPane().add(jtabbed);
+			firstStart = false;
+		}
+//		jtabbed.addTab("One", gComp);
+		 jtabbed.addTab("One", null, gComp, "Tab 1");
 	}
 
-	private mxCustomGraph buildGraph(Multimap<Group, GroupTransition> groupTransitions, int ratioStrongMatching) {
+	private mxCustomGraph buildGraph(
+			Multimap<Group, GroupTransition> groupTransitions,
+			int ratioStrongMatching) {
 		Set<String> vertexes = new HashSet<>();
 		Set<Group> keys = groupTransitions.keySet();
 		JaccardIndex jIdx = new JaccardIndex();
@@ -100,8 +114,11 @@ public class GEVi {
 			if (!vertexes.contains(key.getName())) {
 				vertexes.add(key.getName());
 				String groupName = key.getName();
-				String label = key.getName() + " [" + key.getMembers().size() + "]";
-				Object o = g.insertLayerVertex(key.getSlotNo(), parent, groupName, label, INITIAL_POSITION, INITIAL_POSITION, cellWidth, cellHeight);
+				String label = key.getName() + " [" + key.getMembers().size()
+						+ "]";
+				Object o = g.insertLayerVertex(key.getSlotNo(), parent,
+						groupName, label, INITIAL_POSITION, INITIAL_POSITION,
+						cellWidth, cellHeight);
 				vertexNameMap.put(key.getName(), o);
 				((mxCustomCell) o).setGroupMembers(key.getMembers());
 				((mxCustomCell) o).setContextMap(key.getContextMap());
@@ -112,26 +129,38 @@ public class GEVi {
 				String targetNode = transition.getTo().getName();
 				if (!vertexes.contains(targetNode)) {
 					vertexes.add(targetNode);
-					String label = transition.getTo().getName() + " [" + transition.getTo().getMembers().size() + "]";
-					Object o = g.insertLayerVertex(transition.getTo().getSlotNo(), parent, transition.getTo().getName(), label, INITIAL_POSITION, INITIAL_POSITION, cellWidth, cellHeight);
+					String label = transition.getTo().getName() + " ["
+							+ transition.getTo().getMembers().size() + "]";
+					Object o = g.insertLayerVertex(transition.getTo()
+							.getSlotNo(), parent, transition.getTo().getName(),
+							label, INITIAL_POSITION, INITIAL_POSITION,
+							cellWidth, cellHeight);
 					vertexNameMap.put(targetNode, o);
-					((mxCustomCell) o).setGroupMembers(transition.getTo().getMembers());
-					((mxCustomCell) o).setContextMap(transition.getTo().getContextMap());
+					((mxCustomCell) o).setGroupMembers(transition.getTo()
+							.getMembers());
+					((mxCustomCell) o).setContextMap(transition.getTo()
+							.getContextMap());
 				}
 				Object from = vertexNameMap.get(transition.getFrom().getName());
 				Object to = vertexNameMap.get(targetNode);
 
-				int intersectionSize = CollectionUtils.intersection(transition.getFrom().getMembers(), transition.getTo().getMembers()).size();
+				int intersectionSize = CollectionUtils.intersection(
+						transition.getFrom().getMembers(),
+						transition.getTo().getMembers()).size();
 				String sValue = String.valueOf(intersectionSize);
 
-				int times = diffSizeTimesMeasure.calculate(transition.getFrom().getMembers(), transition.getTo().getMembers());
+				int times = diffSizeTimesMeasure.calculate(transition.getFrom()
+						.getMembers(), transition.getTo().getMembers());
 
-				double jaccard = jIdx.calculate(transition.getFrom().getMembers(), transition.getTo().getMembers());
+				double jaccard = jIdx.calculate(transition.getFrom()
+						.getMembers(), transition.getTo().getMembers());
 				Object e = null;
 				if (times >= ratioStrongMatching) {
-					e = g.insertLayerEdge(transition.getFrom().getSlotNo(), parent, null, sValue, from, to, DASHED_EDGE_STYLE);
+					e = g.insertLayerEdge(transition.getFrom().getSlotNo(),
+							parent, null, sValue, from, to, DASHED_EDGE_STYLE);
 				} else {
-					e = g.insertLayerEdge(transition.getFrom().getSlotNo(), parent, null, sValue, from, to, EDGE_STYLE);
+					e = g.insertLayerEdge(transition.getFrom().getSlotNo(),
+							parent, null, sValue, from, to, EDGE_STYLE);
 				}
 				((mxCustomCell) e).setStability(jaccard);
 
@@ -141,28 +170,35 @@ public class GEVi {
 		return g;
 	}
 
-	private void assignAdditionalInfoForTransitions(Map<String, mxCustomCell> vertexMap, Multimap<Group, GroupTransition> groupTransitions) {
+	private void assignAdditionalInfoForTransitions(
+			Map<String, mxCustomCell> vertexMap,
+			Multimap<Group, GroupTransition> groupTransitions) {
 
 		FlowMeasure flowMeasure = new FlowMeasure();
 		JaccardIndex jaccard = new JaccardIndex();
 		DiffSizeMeasure diffSizeM = new DiffSizeMeasure();
-		Map<String, Group> groupMap = GroupTransitionsUtil.extractGroups(groupTransitions);
+		Map<String, Group> groupMap = GroupTransitionsUtil
+				.extractGroups(groupTransitions);
 
 		for (Group group : groupMap.values()) {
-			Collection<Group> succesors = GroupTransitionsUtil.getGroupSuccessors(group, groupTransitions);
+			Collection<Group> succesors = GroupTransitionsUtil
+					.getGroupSuccessors(group, groupTransitions);
 			mxCustomCell currentGroupC = vertexMap.get(group.getName());
 
 			// simple
 			if (succesors.size() == 1) {
 				Group nextGroup = succesors.iterator().next();
-				double value = flowMeasure.calculate(group.getMembers(), nextGroup.getMembers());
-				int leftDiff = diffSizeM.calculate(group.getMembers(), nextGroup.getMembers(), true);
+				double value = flowMeasure.calculate(group.getMembers(),
+						nextGroup.getMembers());
+				int leftDiff = diffSizeM.calculate(group.getMembers(),
+						nextGroup.getMembers(), true);
 
 				if (value <= 1 && value > -1 && value != 0) {
 					currentGroupC.setOutgoingAdds();
 					currentGroupC.setOutgoingValue(leftDiff);
 				} else if (value == 0) {
-					double jValue = jaccard.calculate(group.getMembers(), nextGroup.getMembers());
+					double jValue = jaccard.calculate(group.getMembers(),
+							nextGroup.getMembers());
 					if (jValue < 1 && jValue > 0) {
 						currentGroupC.setOutgoingAdds();
 						currentGroupC.setOutgoingValue(leftDiff);
@@ -173,14 +209,17 @@ public class GEVi {
 				for (Group succ : succesors) {
 					sumSplittedGroups.addAll(succ.getMembers());
 				}
-				double value = flowMeasure.calculate(group.getMembers(), sumSplittedGroups);
-				int leftDiff = diffSizeM.calculate(group.getMembers(), sumSplittedGroups, true);
+				double value = flowMeasure.calculate(group.getMembers(),
+						sumSplittedGroups);
+				int leftDiff = diffSizeM.calculate(group.getMembers(),
+						sumSplittedGroups, true);
 				if (value <= 1 && value > -1 && value != 0) {
 					currentGroupC.setOutgoingAdds();
 					currentGroupC.setOutgoingValue(leftDiff);
 				} else {
 					if (value == 0) {
-						double jValue = jaccard.calculate(group.getMembers(), sumSplittedGroups);
+						double jValue = jaccard.calculate(group.getMembers(),
+								sumSplittedGroups);
 						if (jValue < 1 && jValue > 0) {
 							currentGroupC.setOutgoingAdds();
 							currentGroupC.setOutgoingValue(leftDiff);
@@ -190,18 +229,22 @@ public class GEVi {
 
 			}
 
-			Collection<Group> predecessors = GroupTransitionsUtil.getGroupPredecessors(group, groupTransitions);
+			Collection<Group> predecessors = GroupTransitionsUtil
+					.getGroupPredecessors(group, groupTransitions);
 			// simple
 			if (predecessors.size() == 1) {
 				Group prevGroup = predecessors.iterator().next();
-				double value = flowMeasure.calculate(prevGroup.getMembers(), group.getMembers());
-				int rightDiff = diffSizeM.calculate(prevGroup.getMembers(), group.getMembers(), false);
+				double value = flowMeasure.calculate(prevGroup.getMembers(),
+						group.getMembers());
+				int rightDiff = diffSizeM.calculate(prevGroup.getMembers(),
+						group.getMembers(), false);
 
 				if (value < 1 && value >= -1 && value != 0) {
 					currentGroupC.setIncomingAdds();
 					currentGroupC.setIncomingValue(rightDiff);
 				} else if (value == 0) {
-					double jValue = jaccard.calculate(prevGroup.getMembers(), group.getMembers());
+					double jValue = jaccard.calculate(prevGroup.getMembers(),
+							group.getMembers());
 					if (jValue < 1 && jValue > 0) {
 						currentGroupC.setIncomingAdds();
 						currentGroupC.setIncomingValue(rightDiff);
@@ -212,13 +255,16 @@ public class GEVi {
 				for (Group pred : predecessors) {
 					sumMergedGroups.addAll(pred.getMembers());
 				}
-				double value = flowMeasure.calculate(sumMergedGroups, group.getMembers());
-				int rightDiff = diffSizeM.calculate(sumMergedGroups, group.getMembers(), false);
+				double value = flowMeasure.calculate(sumMergedGroups,
+						group.getMembers());
+				int rightDiff = diffSizeM.calculate(sumMergedGroups,
+						group.getMembers(), false);
 				if (value < 1 && value >= -1 && value != 0) {
 					currentGroupC.setIncomingAdds();
 					currentGroupC.setIncomingValue(rightDiff);
 				} else if (value == 0) {
-					double jValue = jaccard.calculate(sumMergedGroups, group.getMembers());
+					double jValue = jaccard.calculate(sumMergedGroups,
+							group.getMembers());
 					if (jValue < 1 && jValue > 0) {
 						currentGroupC.setIncomingAdds();
 						currentGroupC.setIncomingValue(rightDiff);
@@ -304,7 +350,8 @@ public class GEVi {
 
 	public void refreshAfterContextChanges() {
 		if (contextName != null && category != null) {
-			gComp.recolorConvergentVertices(contextName, category, maxThresholdForContext);
+			gComp.recolorConvergentVertices(contextName, category,
+					maxThresholdForContext);
 		}
 	}
 

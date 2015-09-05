@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.springframework.stereotype.Component;
+
 import pl.edu.agh.sna.measures.DiffSizeTimesMeasure;
 import pl.edu.agh.sna.measures.ModifiedJaccardIndex;
 import pl.edu.agh.sna.model.Group;
@@ -29,6 +31,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
+@Component("groupEvolutionTracker")
 public class GroupEvolutionTracker {
 	private static final int MIN_GROUP_SIZE = 3;
 	private List<TimeSlot> timeslots;
@@ -49,6 +52,8 @@ public class GroupEvolutionTracker {
 	}
 
 	public void evaluateSgci() {
+		groupTransitions.clear();
+		decayGroupTransitions.clear();
 		makeTransitions(evolutionThreshold);
 		extractStableGroups();
 		assignEventsToTransitions();
@@ -83,6 +88,9 @@ public class GroupEvolutionTracker {
 						double match = mJaccard.calculate(currentGroup.getMembers(), nextGroup.getMembers());
 
 						if (match >= threshold) {
+							if(currentGroup.getGlobalName().equals("6_32")){
+								System.out.println("a");
+							}
 							GroupTransition transition = new GroupTransition(currentGroup, nextGroup, match);
 							groupTransitions.put(currentGroup, transition);
 						}
@@ -383,6 +391,7 @@ public class GroupEvolutionTracker {
 				if (stableGroups.contains(group)) {
 					Collection<GroupTransition> successors = GroupTransitionsUtil.getGroupSuccessorTransitions(group,
 							groupTransitions);
+					//jesli juz nie ma nastepcow
 					if (successors.size() == 0 && (timeslot.getNumber() != lastSlotNo)) {
 						GroupTransition transition = new GroupTransition(group, null, 0);
 						transition.setEventType(GroupEvents.DECAY);
@@ -391,6 +400,40 @@ public class GroupEvolutionTracker {
 				}
 			}
 		}
+	}
+
+	public Multimap<Group, GroupTransition> getDecayGroupTransitions() {
+		return decayGroupTransitions;
+	}
+
+	public void setDecayGroupTransitions(
+			Multimap<Group, GroupTransition> decayGroupTransitions) {
+		this.decayGroupTransitions = decayGroupTransitions;
+	}
+
+	public int getLastSlotNo() {
+		return lastSlotNo;
+	}
+
+	public void setLastSlotNo(int lastSlotNo) {
+		this.lastSlotNo = lastSlotNo;
+	}
+
+	public static int getMinGroupSize() {
+		return MIN_GROUP_SIZE;
+	}
+
+	public List<TimeSlot> getTimeslots() {
+		return timeslots;
+	}
+
+	public void setStableGroups(Set<Group> stableGroups) {
+		this.stableGroups = stableGroups;
+	}
+
+	public void setGroupTransitions(
+			Multimap<Group, GroupTransition> groupTransitions) {
+		this.groupTransitions = groupTransitions;
 	}
 
 }

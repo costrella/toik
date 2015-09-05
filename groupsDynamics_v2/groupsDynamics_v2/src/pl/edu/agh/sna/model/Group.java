@@ -60,6 +60,14 @@ public class Group {
 		this.globalName = name;
 	}
 
+	public String getGlobalName() {
+		return globalName;
+	}
+
+	public void setGlobalName(String globalName) {
+		this.globalName = globalName;
+	}
+
 	public Map<Integer, Double> getParams() {
 		return params;
 	}
