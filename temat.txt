@@ -1,0 +1,19 @@
+Rozbudowa narzêdzia do wizualizacji dynamiki grup spo³ecznych (GEVi, aplikacja z
+u¿yciem biblioteki JGraphX) o osadzenie w platformie komponentowej (do
+ustalenia, np. Spring), stworzenie GUI do manipulacji oraz o mo¿liwoœæ œledzenia
+przynale¿noœci osób/charakterystyk osób do grup w czasie
+
+Celem projektu jest rozbudowa istniej¹cego projektu o dodatkowe funkcjonalnoœci i opakowanie go w technologiê komponentow¹.
+
+Wymagania funkcjonalne
+
+GUI z prze³¹cznikami
+Mo¿liwoœæ okreœlania w jakich grupach znajduje siê osoba
+Dodanie informacji do poszczególnych slotów czasowych
+Znajdywanie przejœæ w grupach (wyodrêbniony komponent)
+Podobne narzêdzia
+
+Stos technologiczny
+
+Java 7
+Spring
