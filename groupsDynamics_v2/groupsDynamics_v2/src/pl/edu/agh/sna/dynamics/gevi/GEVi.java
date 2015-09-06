@@ -12,6 +12,7 @@ import javax.swing.SwingConstants;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import pl.edu.agh.sna.dynamics.GroupEvolutionTracker;
@@ -25,12 +26,17 @@ import pl.edu.agh.sna.measures.FlowMeasure;
 import pl.edu.agh.sna.measures.JaccardIndex;
 import pl.edu.agh.sna.model.Group;
 import pl.edu.agh.sna.model.GroupTransition;
+import pl.edu.agh.sna.model.TimeSlot;
 import pl.edu.agh.sna.util.GroupTransitionsUtil;
 
 import com.google.common.collect.Multimap;
 
 @Component("gevi")
 public class GEVi {
+	
+	@Autowired
+	GroupEvolutionTracker groupEvolutionTracker;
+	
 	private static final int DEFAULT_CELL_WIDTH = 80;
 	private static final int DEFAULT_CELL_HEIGHT = 40;
 	private static final int INITIAL_POSITION = 10;
@@ -54,11 +60,12 @@ public class GEVi {
 	private boolean firstStart = true;
 	private JTabbedPane jtabbed;
 	int tabIndex = 0;
+	public mxCustomGraph g;
 
 	public void visualiseGroupEvolution(GroupEvolutionTracker evo,
 			Multimap<Group, GroupTransition> groupTransitions,
 			int thresholdStrongMatching) {
-		mxCustomGraph g = buildGraph(groupTransitions, thresholdStrongMatching);
+		g = buildGraph(groupTransitions, thresholdStrongMatching);
 		Map<String, mxCustomCell> vertexNameMap = g.getVertexMap();
 		log.debug("nodes in jgraph: " + vertexNameMap.size());
 
@@ -77,7 +84,7 @@ public class GEVi {
 		g.setAutoSizeCells(true);
 		g.getModel().endUpdate();
 
-		gComp = new mxCustomGraphComponent(g);
+		gComp = new mxCustomGraphComponent(g, groupEvolutionTracker.getTimeslots());
 		gComp.zoom(zoom);
 		if (contextName != null && category != null) {
 			gComp.recolorConvergentVertices(contextName, category,
@@ -94,7 +101,6 @@ public class GEVi {
 			frame.getContentPane().add(jtabbed);
 			firstStart = false;
 		}
-//		jtabbed.addTab("One", gComp);
 		String param = "<html><body>Param("+ ++tabIndex +"): <br>"
 				+ "<b>Evolution Threshold: </b>"+evo.getEvolutionThreshold() + "<br>"+
 				"<b>ratioBetweenGroupsForMatching: </b>"+evo.getRatioBetweenGroupsForMatching()+ "<br>"+
@@ -103,8 +109,8 @@ public class GEVi {
 				"<b>minDurationTimeForStableGroups: </b>"+evo.getMinDurationTimeForStableGroups();
 		
 		
-		
 		 jtabbed.addTab("Tab:"+ tabIndex, null, gComp, param);
+		 jtabbed.setSelectedIndex(tabIndex-1);
 	}
 
 	private mxCustomGraph buildGraph(

@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.JFrame;
@@ -18,6 +19,7 @@ import javax.swing.ToolTipManager;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import pl.edu.agh.sna.model.TimeSlot;
 import pl.edu.agh.sna.util.ColorsUtil;
 
 import com.mxgraph.model.mxGraphModel;
@@ -32,7 +34,11 @@ public class mxCustomGraphComponent extends mxGraphComponent {
 
 	private static final long serialVersionUID = -7498805989626086160L;
 
-	public mxCustomGraphComponent(mxGraph graph) {
+	public mxGraphModel getMxGraph() {
+		return (mxGraphModel) getGraph().getModel();
+	}
+
+	public mxCustomGraphComponent(mxGraph graph, final List<TimeSlot> timeslots) {
 		super(graph);
 		setToolTips(true);
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
@@ -52,6 +58,9 @@ public class mxCustomGraphComponent extends mxGraphComponent {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == 'f') {
 					showDialog();
+				}
+				if (e.getKeyChar() == 't') {
+					showTimeSlotInfo(timeslots);
 				}
 			}
 		});
@@ -78,14 +87,17 @@ public class mxCustomGraphComponent extends mxGraphComponent {
 					}
 					compareGroupMembers = true;
 					cell.setStyle("fillColor=FF8157;strokeColor=turqoise;strokeWidth=3");
-					Object[] vertices = getGraph().getChildVertices(getGraph().getDefaultParent());
+					Object[] vertices = getGraph().getChildVertices(
+							getGraph().getDefaultParent());
 
 					for (Object vertexObject : vertices) {
 						mxCustomCell vertex = (mxCustomCell) vertexObject;
 						if (vertex != cell) {
-							Collection<String> commonElements = CollectionUtils.intersection(cell.getGroupMembers(), vertex.getGroupMembers());
+							Collection<String> commonElements = CollectionUtils
+									.intersection(cell.getGroupMembers(),
+											vertex.getGroupMembers());
 							if (commonElements.size() > 0) {
-								vertex.setStyle("fillColor=FF8157");
+								vertex.setStyle("fillColor=FFFFF");
 								vertex.setCommonElements(commonElements);
 							}
 						}
@@ -102,7 +114,8 @@ public class mxCustomGraphComponent extends mxGraphComponent {
 	}
 
 	private void showDialog() {
-		String value = JOptionPane.showInputDialog(new JFrame(), "Enter node name:", "Find node");
+		String value = JOptionPane.showInputDialog(new JFrame(),
+				"Enter node name:", "Find node");
 		if (value != null) {
 			Object cell = ((mxGraphModel) getGraph().getModel()).getCell(value);
 			if (cell != null) {
@@ -112,8 +125,22 @@ public class mxCustomGraphComponent extends mxGraphComponent {
 		}
 	}
 
+	private void showTimeSlotInfo(List<TimeSlot> timeslots) {
+		String info = "<html><body><b>TIME SLOT INFO:</b><br>";
+		for (TimeSlot time : timeslots) {
+			System.out.println("#"+time.getNumber()+", from: "+time.getStartDate().toString() + "; to:"
+					+ time.getEndDate());
+			info +="#"+time.getNumber()+", from: "+time.getStartDate().toString() + "; to:"
+					+ time.getEndDate()+"<br>";
+			
+		}
+		JOptionPane.showMessageDialog(new JFrame(),
+				info);
+	}
+
 	private void cleanAllVerticesStyle() {
-		Object[] vertices = getGraph().getChildVertices(getGraph().getDefaultParent());
+		Object[] vertices = getGraph().getChildVertices(
+				getGraph().getDefaultParent());
 		for (Object vertexObject : vertices) {
 			mxCustomCell vertex = (mxCustomCell) vertexObject;
 			vertex.setStyle("none");
@@ -126,7 +153,8 @@ public class mxCustomGraphComponent extends mxGraphComponent {
 		Rectangle r = getBounds();
 		double partX = 1.0 * e.getX() / r.width;
 		double partY = 1.0 * e.getY() / r.height;
-		Point centerTranslate = new Point((int) r.getCenterX() - e.getX(), (int) r.getCenterY() - e.getY());
+		Point centerTranslate = new Point((int) r.getCenterX() - e.getX(),
+				(int) r.getCenterY() - e.getY());
 
 		double localZoomFactor = 0;
 
@@ -139,16 +167,21 @@ public class mxCustomGraphComponent extends mxGraphComponent {
 
 	}
 
-	public void zoom(double factor, double partX, double partY, Point centerTranslate) {
+	public void zoom(double factor, double partX, double partY,
+			Point centerTranslate) {
 		mxGraphView view = graph.getView();
 		double newScale = (double) ((int) (view.getScale() * 100 * factor)) / 100;
 
 		if (newScale != view.getScale() && newScale > 0.04) {
-			mxPoint translate = (pageVisible && centerPage) ? getPageTranslate(newScale) : new mxPoint();
-			graph.getView().scaleAndTranslate(newScale, translate.getX(), translate.getY());
+			mxPoint translate = (pageVisible && centerPage) ? getPageTranslate(newScale)
+					: new mxPoint();
+			graph.getView().scaleAndTranslate(newScale, translate.getX(),
+					translate.getY());
 
 			if (keepSelectionVisibleOnZoom && !graph.isSelectionEmpty()) {
-				getGraphControl().scrollRectToVisible(view.getBoundingBox(graph.getSelectionCells()).getRectangle());
+				getGraphControl().scrollRectToVisible(
+						view.getBoundingBox(graph.getSelectionCells())
+								.getRectangle());
 			} else {
 				maintainScrollBar(true, factor, partX);
 				maintainScrollBar(false, factor, partY);
@@ -157,17 +190,21 @@ public class mxCustomGraphComponent extends mxGraphComponent {
 
 	}
 
-	protected void maintainScrollBar(boolean horizontal, double factor, double part) {
-		JScrollBar scrollBar = (horizontal) ? getHorizontalScrollBar() : getVerticalScrollBar();
+	protected void maintainScrollBar(boolean horizontal, double factor,
+			double part) {
+		JScrollBar scrollBar = (horizontal) ? getHorizontalScrollBar()
+				: getVerticalScrollBar();
 
 		if (scrollBar != null) {
 			BoundedRangeModel model = scrollBar.getModel();
 
 			int newValue = (int) Math.round(model.getValue() * factor);
 			if (factor > 1) {
-				newValue += (int) Math.round(model.getExtent() * (factor - 1) * part);
+				newValue += (int) Math.round(model.getExtent() * (factor - 1)
+						* part);
 			} else {
-				newValue += (int) Math.round(model.getExtent() * (factor - 1) * part);
+				newValue += (int) Math.round(model.getExtent() * (factor - 1)
+						* part);
 			}
 			if (newValue > model.getMaximum()) {
 
@@ -190,9 +227,11 @@ public class mxCustomGraphComponent extends mxGraphComponent {
 		return true;
 	}
 
-	public void recolorConvergentVertices(String contextName, String category, double maxThresholdForContext) {
+	public void recolorConvergentVertices(String contextName, String category,
+			double maxThresholdForContext) {
 		cleanAllVerticesStyle();
-		Object[] vertices = getGraph().getChildVertices(getGraph().getDefaultParent());
+		Object[] vertices = getGraph().getChildVertices(
+				getGraph().getDefaultParent());
 		for (Object vertexObject : vertices) {
 			mxCustomCell vertex = (mxCustomCell) vertexObject;
 			Double value = vertex.getContext(contextName).get(category);
@@ -206,7 +245,8 @@ public class mxCustomGraphComponent extends mxGraphComponent {
 				} else if (contextName.equals("topics")) {
 					maxThreshold = 0.3;
 				}
-				String color = ColorsUtil.getColorSaturation(value, maxThreshold);
+				String color = ColorsUtil.getColorSaturation(value,
+						maxThreshold);
 				color += ";fontSize=15";
 				vertex.setStyle(color);
 			}
